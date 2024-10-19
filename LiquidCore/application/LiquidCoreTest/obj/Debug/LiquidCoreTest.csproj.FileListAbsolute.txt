@@ -1,0 +1,37 @@
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe.config
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\MySql.Data.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCXmlDbClient.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.exe
+C:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe.config
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCXmlDbClient.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\ResolveAssemblyReference.cache
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.exe
+D:\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe.config
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.exe
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCoreTest.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCXmlDbClient.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\iCDataHandler.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\bin\Debug\LiquidCore.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\ResolveAssemblyReference.cache
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.exe
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCoreTest\obj\Debug\LiquidCoreTest.pdb

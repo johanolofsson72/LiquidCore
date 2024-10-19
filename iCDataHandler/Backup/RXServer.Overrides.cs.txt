@@ -1,0 +1,334 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
+
+namespace RXServer
+{
+    public class RXPageGlobal : RXPageVirtual
+    {
+        public RXServer.Page RXPage;
+        public Int32 SitId = 1;
+        public Int32 PagId = 1;
+
+        public override void Page_PreInit(object sender, EventArgs e)
+        {
+            try
+            {
+                this.SitId = 1;
+
+                // Läser av eventuell Request PagId...
+                this.PagId = RXServer.Web.RequestValues.PagId;
+                
+                // Sätter nuvarande SitId och PagId, som sen kan läsas av...
+                RXServer.Web.CurrentValues.SitId = this.SitId;
+                RXServer.Web.CurrentValues.PagId = this.PagId;
+                
+                // Sätter alla nuvarande levels, där Level1 är root...
+                RXServer.Web.SelectedPages.SetSelected();
+
+                // Hämta root menyn, endast för RXServer Core...
+                this.RXMenu = new RXServer.Web.Menus.Menu(this.SitId, 0, this.PagId);
+
+                // Sätter det aktuella menyalternativet...
+                this.RXCurrentMenuItem = new RXServer.Web.Menus.MenuItem(this.SitId, this.PagId);
+
+                this.Title = Server.UrlDecode(RXCurrentMenuItem.Name);
+
+                if (RXServer.Web.CurrentValues.PagId.Equals(0))
+                    RXServer.Web.CurrentValues.PagId = 1;
+
+                using (RXServer.Site s = new RXServer.Site(SitId, RXServer.Data.DataSource, RXServer.Data.ConnectionString))
+                {
+                    this.Theme = s.Theme;
+                    this.RXPage = new RXServer.Page(SitId, RXServer.Web.CurrentValues.PagId, false, RXServer.Data.DataSource, RXServer.Data.ConnectionString);
+                    this.Title = s.Name;
+                }
+
+                this.Title = "Wyeth";
+                Control c = Common.FindControlRecursive(Page, "PageTemplate");
+                c.SkinID = RXPage.Skin; //this.RXCurrentMenuItem.PageTemplate; // 
+
+
+                // =============================
+
+                this.Title = this.RXCurrentMenuItem.Settings.MetaTitle; 
+                HtmlHead PageHead = (HtmlHead)Page.FindControl("PageHead");
+                PageHead.Controls.AddAt(1, new LiteralControl("<meta name=\"keywords\" content=\"" + this.RXCurrentMenuItem.Settings.MetaKeywords + "\">"));
+                PageHead.Controls.AddAt(2, new LiteralControl("<meta name=\"description\" content=\"" + this.RXCurrentMenuItem.Settings.MetaDescription + "\">"));
+                PageHead.Controls.AddAt(3, new LiteralControl("<meta name=\"author\" content=\"Wyeth\">"));
+                PageHead.Controls.AddAt(4, new LiteralControl("<meta name=\"copyright\" content=\"Wyeth\">"));
+                PageHead.Controls.AddAt(5, new LiteralControl("<meta name=\"robots\" content=\"index,follow\">"));
+
+                // =============================
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());  
+            }
+        }
+
+        public override void Page_Init(object sender, EventArgs e)
+        {
+            try
+            {
+                String ModuleType = String.Empty;
+                String ModuleWidth = String.Empty;
+                String ModuleHeight = String.Empty;
+                Int32 ModuleCounter1 = 0;
+                Int32 ModuleCounter2 = 0;
+                Boolean ModSSL = false;
+
+                // används för SLL...
+                String INSSL = "0";
+                if (Session["INSSL"] != null)
+                    INSSL = Session["INSSL"].ToString();
+
+                foreach (RXServer.Module m in this.RXPage.Modules)
+                {
+                    if (m != null)
+                    {
+                        Control c = Common.FindRXContentHolder(Page, m.Pane);
+                        if (c != null)
+                        {
+                            // läser av om modulen kräver SLL...
+                            if (m.SSL)
+                                ModSSL = true;
+
+                            RXModuleGlobal mg = (RXModuleGlobal)Page.LoadControl(m.Src);
+                            mg.SitId = m.SitId;
+                            mg.PagId = m.PagId;
+                            mg.ModId = m.Id;
+                            mg.Skin = m.Skin;
+
+                            RenderContentControl(c, mg);
+                        }
+                    }
+                }
+                
+                // Här kontrolleras SLL och QueryStrings
+                // om urlen behöver skrivas om så sker det.
+                // Tänk på att filenerna som ska användas är följande:
+                // Default.aspx och SLL.aspx och båda två ska ligga
+                // under root.
+                if (PagId > 0)
+                {
+                    if (ModSSL && INSSL.Equals("0"))
+                    {
+                        Session["INSSL"] = "1";
+                        Response.Redirect("https://" + Request.Url.Host + Request.Url.AbsolutePath.Replace("/Default.aspx", "/(S(" + HttpContext.Current.Session.SessionID + "))/SSL.aspx") + Request.Url.Query, false);
+                    }
+                    else if (INSSL.Equals("1") && Request.Url.AbsolutePath.EndsWith("Default.aspx"))
+                    {
+                        Session["INSSL"] = "1";
+                        Response.Redirect("https://" + Request.Url.Host + Request.Url.AbsolutePath.Replace("/Default.aspx", "/(S(" + HttpContext.Current.Session.SessionID + "))/SSL.aspx") + Request.Url.Query, false);
+                    }
+                    else if (!ModSSL && INSSL.Equals("1"))
+                    {
+                        Session["INSSL"] = "0";
+                        Response.Redirect("http://" + Request.Url.Host + Request.Url.AbsolutePath.Replace("/SSL.aspx", "/(S(" + HttpContext.Current.Session.SessionID + "))/Default.aspx") + Request.Url.Query, false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        public override void RenderContentControl(Control c, Control Mod)
+        {
+            c.Controls.Add(new LiteralControl("<table cellpadding='0' cellspacing='0' align='left' style='display: inline; float: left;'><tr><td>"));
+            c.Controls.Add(Mod);
+            c.Controls.Add(new LiteralControl("</td></tr></table>"));
+        }
+
+        public override void RenderContentSpacer(Control c, Boolean Thin, Boolean High)
+        {
+            if (Thin)
+            {
+                if (High)
+                {
+                    c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                    c.Controls.Add(new LiteralControl("<td class='module_start_spacer_big'><img src='../images/pixel_trans.gif' /></td>"));
+                    c.Controls.Add(new LiteralControl("</tr></table>"));
+                }
+                else
+                {
+                    c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                    c.Controls.Add(new LiteralControl("<td class='module_start_spacer_mini'><img src='../images/pixel_trans.gif' /></td>"));
+                    c.Controls.Add(new LiteralControl("</tr></table>"));
+                }
+            }
+            else
+            {
+                c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                c.Controls.Add(new LiteralControl("<td class='module_spacer'><img src='../images/pixel_trans.gif' /></td>"));
+                c.Controls.Add(new LiteralControl("</tr></table>"));
+            }
+        }
+    }
+}
+
+namespace RXServer
+{
+
+    public class RXWebGengeric
+    {
+        public const String TEMP1 = "";
+        public const String TEMP2 = "";
+
+        private static string _sitePath1 = "";
+        private static string _sitePath2 = "";
+        private static string _sitePath3 = "";
+        private static string _sitePath4 = "";
+        private static string _sitePath5 = "";
+        private static string _sitePath6 = "";
+        private static string _sitePath7 = "";
+        private static string _sitePath8 = "";
+        private static string _sitePath9 = "";
+        private static string _sitePath10 = "";
+
+
+        private static String sitePath1
+        {
+            set
+            {
+                _sitePath1 = value;
+            }
+        }
+
+        private static String sitePath2
+        {
+            set
+            {
+                _sitePath2 = value;
+            }
+        }
+
+        private static String sitePath3
+        {
+            set
+            {
+                _sitePath3 = value;
+            }
+        }
+
+        private static String sitePath4
+        {
+            set
+            {
+                _sitePath4 = value;
+            }
+        }
+
+        private static String sitePath5
+        {
+            set
+            {
+                _sitePath5 = value;
+            }
+        }
+
+        private static String sitePath6
+        {
+            set
+            {
+                _sitePath6 = value;
+            }
+        }
+
+        private static String sitePath7
+        {
+            set
+            {
+                _sitePath7 = value;
+            }
+        }
+
+        private static String sitePath8
+        {
+            set
+            {
+                _sitePath8 = value;
+            }
+        }
+
+        private static String sitePath9
+        {
+            set
+            {
+                _sitePath9 = value;
+            }
+        }
+
+        private static String sitePath10
+        {
+            set
+            {
+                _sitePath10 = value;
+            }
+        }
+
+        public RXWebGengeric()
+        {
+            RXWebGengeric.sitePath1 = ConfigurationManager.AppSettings["site1Path"].ToString();
+            RXWebGengeric.sitePath2 = ConfigurationManager.AppSettings["site2Path"].ToString();
+            RXWebGengeric.sitePath3 = ConfigurationManager.AppSettings["site3Path"].ToString();
+            RXWebGengeric.sitePath4 = ConfigurationManager.AppSettings["site4Path"].ToString();
+            RXWebGengeric.sitePath5 = ConfigurationManager.AppSettings["site5Path"].ToString();
+            RXWebGengeric.sitePath6 = ConfigurationManager.AppSettings["site6Path"].ToString();
+            RXWebGengeric.sitePath7 = ConfigurationManager.AppSettings["site7Path"].ToString();
+            RXWebGengeric.sitePath8 = ConfigurationManager.AppSettings["site8Path"].ToString();
+            RXWebGengeric.sitePath9 = ConfigurationManager.AppSettings["site9Path"].ToString();
+            RXWebGengeric.sitePath10 = ConfigurationManager.AppSettings["site10Path"].ToString();
+        }
+
+        public string getSitePath(int site)
+        {
+            string path = "";
+            switch (site)
+            {
+                case 1:
+                    path = _sitePath1;
+                    break;
+                case 2:
+                    path = _sitePath2;
+                    break;
+                case 3:
+                    path = _sitePath3;
+                    break;
+                case 4:
+                    path = _sitePath4;
+                    break;
+                case 5:
+                    path = _sitePath5;
+                    break;
+                case 6:
+                    path = _sitePath6;
+                    break;
+                case 7:
+                    path = _sitePath7;
+                    break;
+                case 8:
+                    path = _sitePath8;
+                    break;
+                case 9:
+                    path = _sitePath9;
+                    break;
+                case 10:
+                    path = _sitePath10;
+                    break;
+
+            }
+            return path;
+        }
+
+    }
+}

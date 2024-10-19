@@ -1,0 +1,22 @@
+
+DROP PROCEDURE IF EXISTS delete_obd_objectdata;
+DROP PROCEDURE IF EXISTS delete_sta_status;
+DROP PROCEDURE IF EXISTS delete_usr_users;
+DROP PROCEDURE IF EXISTS delete_rol_roles;
+DROP PROCEDURE IF EXISTS delete_ust_usertypes;
+DROP PROCEDURE IF EXISTS delete_pag_pages;
+DROP PROCEDURE IF EXISTS delete_pag_pages_recursive;
+DROP PROCEDURE IF EXISTS delete_mde_moduledefinitions;
+DROP PROCEDURE IF EXISTS delete_mdi_modelitems;
+DROP PROCEDURE IF EXISTS delete_mdl_model;
+DROP PROCEDURE IF EXISTS delete_mod_modules_recursive;
+DROP PROCEDURE IF EXISTS delete_mod_modules;
+DROP PROCEDURE IF EXISTS delete_obd_objectdata_by_modid_recursive;
+DROP PROCEDURE IF EXISTS delete_pag_pages_recursive;
+DROP PROCEDURE IF EXISTS delete_pag_pages;
+DROP PROCEDURE IF EXISTS delete_mod_modules_by_pagid_recursive;
+DROP PROCEDURE IF EXISTS delete_set_settings;
+DROP PROCEDURE IF EXISTS delete_sit_sites;
+DROP PROCEDURE IF EXISTS delete_tas_tasks;
+DROP PROCEDURE IF EXISTS delete_agg_aggregation;
+DROP PROCEDURE IF EXISTS delete_doc_documents;

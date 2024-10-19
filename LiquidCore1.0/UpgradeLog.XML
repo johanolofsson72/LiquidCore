@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="LiquidCore1.0">
+</Property><Property Name="Solution File" Value="C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\LiquidCore1.0.sln">
+</Property><Property Name="User Options File" Value="C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\LiquidCore1.0.suo">
+</Property><Property Name="Date" Value="den 2 juli 2012">
+</Property><Property Name="Time" Value="16:20">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="LiquidCore1.0.sln" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore1.0.sln">
+</Event><Event ErrorLevel="0" Project="" Source="LiquidCore1.0.suo" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore1.0.suo">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="LiquidCore1.0.csproj" Description="Project file successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore1.0.csproj">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="LiquidCore1.0.csproj.user" Description="Project user file successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore1.0.csproj.user">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="LiquidCore.CoreLib.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore.CoreLib.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="LiquidCore.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\LiquidCore.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="RssBuilder.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\RssBuilder.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="RssConfigurator.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\RssConfigurator.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="RXServer.Application.cs" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\RXServer.Application.cs">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_implementation5.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_implementation5.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="Database.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\Database.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_fix2.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_fix2.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_implementation.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_implementation.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_implementation2.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_implementation2.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_implementation3.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_implementation3.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="sp_implementation4.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\sp_implementation4.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="rxdbfix.sql" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\rxdbfix.sql">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="ToDo.txt" Description="File successfully backed up as C:\Users\ar\Dropbox\Development\LiquidCore\LiquidCore1.0\Backup\ToDo.txt">
+</Event><Event ErrorLevel="0" Project="LiquidCore1.0" Source="LiquidCore1.0.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="LiquidCore1.0" Source="LiquidCore1.0.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="LiquidCore1.0.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="LiquidCore1.0.sln" Description="Converted">
+</Event></UpgradeLog>

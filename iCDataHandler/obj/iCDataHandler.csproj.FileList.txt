@@ -1,0 +1,6 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\iCDataHandler.dll
+bin\Debug\iCDataHandler.pdb
+obj\Debug\iCDataHandler.dll
+obj\Debug\iCDataHandler.pdb
+bin\Debug\iCXmlDbClient.dll

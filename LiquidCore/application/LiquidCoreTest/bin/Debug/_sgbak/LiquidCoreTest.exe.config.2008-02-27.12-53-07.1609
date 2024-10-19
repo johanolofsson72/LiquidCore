@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <!-- RXServer.Data Settings -->
+    <add key="Data.DataSource" value="MSSQLSERVER" />
+    <add key="Data.ConnectionString" value="Data Source=.\SQLEXPRESS;AttachDbFilename=C:\Development\LiquidCore\LiquidCore\application\RXSK\App_Data\lcd.mdf;Integrated Security=True;User Instance=True" />
+    <add key="Data.CacheTimeOutInMinutes" value="1"/>
+    <add key="Data.CultureDisplayName" value="sv-SE"/>
+    <!-- Error Mail Settings -->
+    <add key="ErrorMailServer" value="localhost"/>
+    <add key="ErrorMailPort" value="25"/>
+    <add key="ErrorMailAddress" value="jool@rflx.se"/>
+    <add key="ErrorMailSender" value="jool@rflx.se"/>
+    <add key="ErrorMailOn" value="false"/>
+    <add key="ErrorRssOn" value="false"/>
+    <add key="SystemRssFilePath" value=""/>
+  </appSettings>
+</configuration>

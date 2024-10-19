@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="iCDataHandler">
+</Property><Property Name="Solution File" Value="\\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\iCDataHandler.sln">
+</Property><Property Name="Date" Value="den 22 februari 2012">
+</Property><Property Name="Time" Value="09:46:55">
+</Property></Properties><Event ErrorLevel="0" Project="iCDataHandler" Source="iCDataHandler.csproj" Description="Project file successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\iCDataHandler.csproj">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="iCDataHandler.csproj.user" Description="Project user file successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\iCDataHandler.csproj.user">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="clsCrypto.cs" Description="File successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\clsCrypto.cs">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="clsConnection.cs" Description="File successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\clsConnection.cs">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="iCDataObject.cs" Description="File successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\iCDataObject.cs">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="RXServer.Overrides.cs.txt" Description="File successfully backed up as \\psf\Home\Documents\Dropbox\Development\LiquidCore\iCDataHandler\Backup\RXServer.Overrides.cs.txt">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="iCDataHandler.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="iCDataHandler" Source="iCDataHandler.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="iCDataHandler" Source="iCDataHandler.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

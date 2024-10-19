@@ -1,0 +1,11 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\iCDataHandler.dll
+bin\Debug\ICSharpCode.SharpZipLib.dll
+bin\Debug\iCXmlDbClient.dll
+bin\Debug\iCDataHandler.pdb
+bin\Debug\LiquidCore.dll
+bin\Debug\LiquidCore.pdb
+obj\Debug\LiquidCore.dll
+obj\Debug\LiquidCore.pdb
+bin\Debug\RXContentHolder.dll
+bin\Debug\RXContentHolder.pdb

@@ -1,0 +1,8 @@
+
+* Skapa ett List object som ska användas av olika rxmoduler.
+
+* RXServer.Admin
+  RXServer.Modules
+  RXServer.Lib
+  
+* Aggregation mellan mod_modules och obd_objectdata

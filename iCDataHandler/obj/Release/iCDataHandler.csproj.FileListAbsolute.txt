@@ -1,0 +1,2 @@
+C:\Users\oland_000\Dropbox (Noisy Cricket)\Development jool\LiquidCore\iCDataHandler\obj\Release\iCDataHandler.csprojResolveAssemblyReference.cache
+C:\Users\oland\Dropbox (Noisy Cricket)\Development jool\LiquidCore\iCDataHandler\obj\Release\iCDataHandler.csprojResolveAssemblyReference.cache

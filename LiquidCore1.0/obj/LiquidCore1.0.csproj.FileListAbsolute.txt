@@ -1,0 +1,16 @@
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\RXContentHolder.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCXmlDbClient.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\RXContentHolder.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\ResolveAssemblyReference.cache
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.pdb
+E:\Dropbox\Development\LiquidCore\LiquidCore1.0\bin\Debug\LiquidCore.dll
+E:\Dropbox\Development\LiquidCore\LiquidCore1.0\bin\Debug\LiquidCore.pdb
+E:\Dropbox\Development\LiquidCore\LiquidCore1.0\obj\Debug\ResolveAssemblyReference.cache
+E:\Dropbox\Development\LiquidCore\LiquidCore1.0\obj\Debug\LiquidCore.dll
+E:\Dropbox\Development\LiquidCore\LiquidCore1.0\obj\Debug\LiquidCore.pdb

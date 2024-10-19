@@ -1,0 +1,2311 @@
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Data;
+using System.Web;
+using System.Reflection;
+using System.Xml;
+using System.Configuration;
+using System.Reflection;
+
+//RXServer
+namespace RXServer
+{
+    using System;
+    using System.Data;
+    using System.Configuration;
+    using System.Web;
+    using System.Web.Security;
+    using System.Web.UI;
+    using System.Web.UI.WebControls;
+    using System.Web.UI.WebControls.WebParts;
+    using System.Web.UI.HtmlControls;
+    public class RXBasePage : System.Web.UI.Page
+    {
+        string CLASSNAME = "[Namespace::RXServer][Class::RXBasePage]";
+        //public RXServer.Menus.Menu RXMenu;
+        //public RXServer.Menus.Menu.Item RXMenuItem;
+        public Int32 SitId = 1;
+        public Int32 PagId = 1;
+        //public Int32 MdlId = 0;
+
+        private string runtimeMasterPageFile;
+
+        public string RuntimeMasterPageFile
+        {
+            get
+            {
+                return runtimeMasterPageFile;
+            }
+            set
+            {
+                runtimeMasterPageFile = value;
+            }
+        }
+
+        protected override void OnPreInit(EventArgs e)
+        {
+            Int32 pid = 0;
+            pid = Convert.ToInt32(Request["pid"]);
+            switch (pid)
+            {
+                case 1:
+                    runtimeMasterPageFile = "~/Templates/Template1.master";
+                    break;
+                case 2:
+                    runtimeMasterPageFile = "~/Templates/Template2.master";
+                    break;
+                case 3:
+                    runtimeMasterPageFile = "~/Templates/Template3.master";
+                    break;
+                case 4:
+                    runtimeMasterPageFile = "~/Templates/Template4.master";
+                    break;
+                case 5:
+                    runtimeMasterPageFile = "~/Templates/Template5.master";
+                    break;
+                default:
+                    runtimeMasterPageFile = "~/Templates/Template1.master";
+                    break;
+            }
+            if (runtimeMasterPageFile != null)
+            {
+                this.MasterPageFile = runtimeMasterPageFile;
+            }
+
+            base.OnPreInit(e);
+        }
+
+        public virtual void Page_PreInit(object sender, EventArgs e)
+        {
+            string FUNCTIONNAME = CLASSNAME + "[Function::Page_PreInit]";
+            try
+            {
+                this.SitId = 1;
+
+                // Läser av eventuell Request PagId...
+                this.PagId = RXServer.Web.RequestValues.PagId;
+
+                // Kolla om den är satt till noll, i så fall ändra till 1...
+                if (this.PagId.Equals(0))
+                    this.PagId = 1;
+
+                // Sätter nuvarande SitId och PagId, som sen kan läsas av...
+                RXServer.Web.CurrentValues.SitId = this.SitId;
+                RXServer.Web.CurrentValues.PagId = this.PagId;
+
+                // Hämtar den rätta sidan och läser av MasterPage (Template.master) ...
+                RXServer.Menus.Menu.Item thispage = new RXServer.Menus.Menu.Item(RXServer.Web.CurrentValues.PagId);
+                runtimeMasterPageFile = "~/Templates/" + thispage.Template;
+                if (runtimeMasterPageFile != null)
+                    this.MasterPageFile = runtimeMasterPageFile;
+
+                // Sätter alla nuvarande levels, där Level1 är root...
+                //RXServer.Web.SelectedPages.SetSelected();
+
+                // Hämta root menyn, endast för RXServer Core...
+                //this.RXMenu = new RXServer.Menus.Menu(this.SitId, 0);
+
+                // Sätter det aktuella menyalternativet...
+                //this.RXMenuItem = new RXServer.Web.Menus.MenuItem(this.SitId, this.PagId);
+
+                //this.Title = Server.UrlDecode(RXCurrentMenuItem.Name);
+
+                //using (RXServer.Site s = new RXServer.Site(SitId, RXServer.Data.DataSource, RXServer.Data.ConnectionString))
+                //{
+                //    this.Theme = s.Theme;
+                //    this.RXPage = new RXServer.Page(SitId, RXServer.Web.CurrentValues.PagId, false, RXServer.Data.DataSource, RXServer.Data.ConnectionString);
+                //    this.Title = s.Name;
+                //}
+
+                //this.Title = "Wyeth";
+                //Control c = Common.FindControlRecursive(Page, "PageTemplate");
+                //c.SkinID = RXPage.Skin; //this.RXCurrentMenuItem.PageTemplate; // 
+
+
+                // =============================
+
+                //this.Title = this.RXCurrentMenuItem.Settings.MetaTitle;
+                //HtmlHead PageHead = (HtmlHead)Page.FindControl("PageHead");
+                //PageHead.Controls.AddAt(1, new LiteralControl("<meta name=\"keywords\" content=\"" + this.RXCurrentMenuItem.Settings.MetaKeywords + "\">"));
+                //PageHead.Controls.AddAt(2, new LiteralControl("<meta name=\"description\" content=\"" + this.RXCurrentMenuItem.Settings.MetaDescription + "\">"));
+                //PageHead.Controls.AddAt(3, new LiteralControl("<meta name=\"author\" content=\"Wyeth\">"));
+                //PageHead.Controls.AddAt(4, new LiteralControl("<meta name=\"copyright\" content=\"Wyeth\">"));
+                //PageHead.Controls.AddAt(5, new LiteralControl("<meta name=\"robots\" content=\"index,follow\">"));
+
+                // =============================
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        public virtual void Page_Init(object sender, EventArgs e)
+        {
+            string FUNCTIONNAME = CLASSNAME + "[Function::Page_Init]";
+            try
+            {
+                using (LiquidCore.Page page = new LiquidCore.Page(RXServer.Web.CurrentValues.PagId))
+                {
+                    if (page.ModelId.Equals(0))
+                    {
+                        foreach (LiquidCore.Module m in page.Modules)
+                        {
+                            Control c = Common.FindControlRecursive(this, m.ContentPane);
+                            if (!c.Equals(null))
+                            {
+                                RXBaseModule mg = (RXBaseModule)this.Page.LoadControl(m.Src);
+                                mg.SitId = m.SitId;
+                                mg.PagId = m.PagId;
+                                mg.ModId = m.Id;
+
+                                RenderContentControl(c, mg);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        LiquidCore.ModelItems mis = new LiquidCore.ModelItems(page.SitId, page.ModelId, 0);
+                        foreach (LiquidCore.Module m in page.Modules)
+                        {
+                            foreach(LiquidCore.ModelItem mi in mis)
+                            {
+                                if (mi.MdeId.Equals(m.MdeId))
+                                {
+                                    Control c = Common.FindControlRecursive(this, mi.ContentPane);
+                                    if (!c.Equals(null))
+                                    {
+                                        RXBaseModule mg = (RXBaseModule)this.Page.LoadControl(m.Src);
+                                        mg.SitId = m.SitId;
+                                        mg.PagId = m.PagId;
+                                        mg.ModId = m.Id;
+
+                                        RenderContentControl(c, mg);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LiquidCore.Error.Report(ex, FUNCTIONNAME, String.Empty);   
+            }
+        }
+
+        public virtual void RenderContentControl(Control c, Control Mod)
+        {
+            c.Controls.Add(new LiteralControl("<table cellpadding='0' cellspacing='0' align='left' style='display: inline; float: left;'><tr><td>"));
+            c.Controls.Add(Mod);
+            c.Controls.Add(new LiteralControl("</td></tr></table>"));
+        }
+
+        public virtual void RenderContentSpacer(Control c, Boolean Thin, Boolean High)
+        {
+            if (Thin)
+            {
+                if (High)
+                {
+                    c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                    c.Controls.Add(new LiteralControl("<td class='module_start_spacer_big'><img src='../images/pixel_trans.gif' /></td>"));
+                    c.Controls.Add(new LiteralControl("</tr></table>"));
+                }
+                else
+                {
+                    c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                    c.Controls.Add(new LiteralControl("<td class='module_start_spacer_mini'><img src='../images/pixel_trans.gif' /></td>"));
+                    c.Controls.Add(new LiteralControl("</tr></table>"));
+                }
+            }
+            else
+            {
+                c.Controls.Add(new LiteralControl("<table align='left' style='display: inline; '><tr>"));
+                c.Controls.Add(new LiteralControl("<td class='module_spacer'><img src='../images/pixel_trans.gif' /></td>"));
+                c.Controls.Add(new LiteralControl("</tr></table>"));
+            }
+        }
+    }
+    public class RXBaseModule : System.Web.UI.UserControl
+    {
+        string CLASSNAME = "[Namespace::RXServer][Class::RXBaseModule]";
+        private RXBaseModuleSettings _ModuleSettings = new RXBaseModuleSettings();
+        public Int32 SitId
+        {
+            get
+            {
+                return _ModuleSettings.SitId;
+            }
+            set
+            {
+                _ModuleSettings.SitId = value;
+            }
+        }
+        public Int32 PagId
+        {
+            get
+            {
+                return _ModuleSettings.PagId;
+            }
+            set
+            {
+                _ModuleSettings.PagId = value;
+            }
+        }
+        public Int32 ModId
+        {
+            get
+            {
+                return _ModuleSettings.ModId;
+            }
+            set
+            {
+                _ModuleSettings.ModId = value;
+            }
+        }
+        //public String Skin
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.Skin;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.Skin = Common.SafeString(value);
+        //    }
+        //}
+        //public String EditWidth
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.EditWidth;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.EditWidth = Common.SafeString(value);
+        //    }
+        //}
+        //public String EditHeight
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.EditHeight;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.EditHeight = Common.SafeString(value);
+        //    }
+        //}
+        //public String Width
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.Width;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.Width = Common.SafeString(value);
+        //    }
+        //}
+        //public String Height
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.Height;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.Height = Common.SafeString(value);
+        //    }
+        //}
+        //public Boolean SLL
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.SLL;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.SLL = value;
+        //    }
+        //}
+        //public String Alias
+        //{
+        //    get
+        //    {
+        //        return _ModuleSettings.Alias;
+        //    }
+        //    set
+        //    {
+        //        _ModuleSettings.Alias = Common.SafeString(value);
+        //    }
+        //}
+        public class RXBaseModuleSettings
+        {
+            string CLASSNAME = "[Namespace::RXServer.RXBaseModule][Class::RXBaseModuleSettings]";
+            public Int32 SitId;
+            public Int32 PagId;
+            public Int32 ModId;
+            //public String Skin;
+            //public String EditWidth;
+            //public String EditHeight;
+            //public String Width;
+            //public String Height;
+            //public Boolean SLL;
+            //public String Alias;
+        }
+    }
+    public class Common
+    {
+        public static Control FindControlRecursive(Control Root, String Id)
+        {
+            string FUNCTIONNAME = "[Namespace::RXServer][Class::Common][Function::FindControlRecursive]";
+            try
+            {
+                if (Root.ID == Id)
+                    return Root;
+                foreach (Control Ctl in Root.Controls)
+                {
+                    Control FoundCtl = FindControlRecursive(Ctl, Id);
+                    if (FoundCtl != null)
+                        return FoundCtl;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LiquidCore.Error.Report(ex, FUNCTIONNAME, String.Empty);
+                return null;
+            }
+        }
+
+        public static Control FindRXContentHolder(Control Root, String Tag)
+        {
+            string FUNCTIONNAME = "[Namespace::RXServer][Class::Common][Function::FindControlRecursive]";
+            try
+            {
+                if (Root.GetType() == typeof(RXServer.RXContentHolder))
+                    return Root;
+                foreach (Control Ctl in Root.Controls)
+                {
+                    
+                    Control FoundCtl = FindRXContentHolder(Ctl, Tag);
+                    if (FoundCtl != null)
+                        if (FoundCtl.GetType() == typeof(RXServer.RXContentHolder))
+                        {
+                            RXServer.RXContentHolder ch = (RXServer.RXContentHolder)FoundCtl;
+                            if (ch.PaneName == Tag)
+                                return FoundCtl;
+                        }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LiquidCore.Error.Report(ex, FUNCTIONNAME, String.Empty);
+                return null;
+            }
+        }
+    }
+}
+
+// RXServer.Menus
+namespace RXServer
+{
+    namespace Menus
+    {
+        using LiquidCore;
+        public class Menu : LiquidCore.Pages
+        {
+            static string CLASSNAME = "[Namespace::RXServer.Application.Menus][Class::Menu]";
+            public Menu(Int32 SitId, Int32 PagParentId)
+                : base(SitId, PagParentId)
+            {
+
+            }
+            public class Item : LiquidCore.Page
+            {
+                static string CLASSNAME = "[Namespace::RXServer.Application.Menus.Menu][Class::Item]";
+                public Item(Int32 Id)
+                    : base(Id)
+                {
+
+                }
+
+            }
+        }
+    }
+}
+
+// RXServer.Application.Dev
+namespace RXServer.Application.Dev
+{
+    using LiquidCore;
+    public class List : CollectionBase, IDisposable
+    {
+        // exempel på hur man skapar en ny typ av lista
+        // i detta fallet personer...
+        //public class Personer : List
+        //{
+        //    public Personer(Int32 SitId, Int32 PagId) : base(SitId, PagId) { }
+        //    public int Add(Person itm)
+        //    {
+        //        return base.Add(itm);
+        //    }
+        //    public void Remove(Person itm)
+        //    {
+        //        base.Remove(itm);
+        //    }
+        //    public class Person : ListItem
+        //    {
+        //        public Person() : base() { }
+        //    }
+        //}
+
+        static string CLASSNAME = "[Namespace::RXServer.Application.Dev][Class::List]";
+
+        #region Private Variables
+        private Int32 m_mod_id = 0;
+        private String m_alias = String.Empty;
+        #endregion Private Variables
+
+        #region Properties
+        #endregion Properties
+
+        #region Constructors
+        public List()
+        {
+            //GetAll();
+        }
+        public List(Int32 ModId)
+        {
+            this.m_mod_id = ModId;
+            GetAllByModId();
+        }
+        ~List()
+        { xFinalize(); }
+        public void Dispose()
+        {
+            xFinalize();
+            System.GC.SuppressFinalize(this);
+        }
+        private void xFinalize()
+        {
+        }
+        #endregion Constructors
+
+        #region Private Functions
+        private int _Add(ListItem itm)
+        {
+            return List.Add(itm);
+        }
+        private void GetAll()
+        {
+            string FUNCTIONNAME = CLASSNAME + "[Function::GetAll]";
+            DataTable dt = null;
+            try
+            {
+                StringBuilder sSQL = new StringBuilder();
+                sSQL.Append("SELECT obd_id FROM obd_objectdata WHERE obd_type = 103 AND obd_deleted = 0");
+                using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                {
+                    dt = oDo.GetDataTable(sSQL.ToString());
+                    if (oDo.HasError)
+                        throw new Exception(oDo.GetError);
+                }
+                foreach (DataRow dr in dt.Rows)
+                {
+                    ListItem i = new ListItem(Convert.ToInt32(dr["obd_id"].ToString()));
+                    this._Add(i);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error.Report(ex, FUNCTIONNAME, "");
+            }
+        }
+        private void GetAllByModId()
+        {
+            string FUNCTIONNAME = CLASSNAME + "[Function::GetAllBySitId]";
+            DataTable dt = null;
+            try
+            {
+                StringBuilder sSQL = new StringBuilder();
+                sSQL.Append("SELECT obd_id FROM obd_objectdata WHERE obd_type = 103 AND mod_id = " + m_mod_id.ToString() + " AND obd_deleted = 0");
+                using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                {
+                    dt = oDo.GetDataTable(sSQL.ToString());
+                    if (oDo.HasError)
+                        throw new Exception(oDo.GetError);
+                }
+                foreach (DataRow dr in dt.Rows)
+                {
+                    ListItem i = new ListItem(Convert.ToInt32(dr["obd_id"].ToString()));
+                    this._Add(i);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error.Report(ex, FUNCTIONNAME, "");
+            }
+        }
+        #endregion Private Functions
+
+        #region Public Functions
+        public static void ResetThis()
+        {
+            string FUNCTIONNAME = CLASSNAME + "[Function::ResetThis]";
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Error.Report(ex, FUNCTIONNAME, "");
+            }
+        }
+        public virtual int Add(ListItem itm)
+        {
+            itm.ModId = this.m_mod_id;
+            itm.Save();
+            return List.Add(itm);
+        }
+        public virtual void Remove(ListItem itm)
+        {
+            itm.Deleted = true;
+            itm.Update();
+            List.Remove(itm);
+        }
+        public virtual ListItem this[int index]
+        {
+            get
+            {
+                return ((ListItem)List[index]);
+            }
+            set
+            {
+                List[index] = value;
+            }
+        }
+        public static Int32 Create(Int32 SitId, Int32 PagId, Int32 MdeId, Int32 ParentId, Int32 Status, Int32 Language)
+        {
+            LiquidCore.Module m = new Module();
+            m.SitId = SitId;
+            m.PagId = PagId;
+            m.MdeId = MdeId;
+            m.Status = Status;
+            m.Language = Language;
+            m.ParentId = ParentId;
+            m.Save();
+            return m.Id;
+        }
+        #endregion Public Functions
+
+        public class ListItem : IDisposable
+        {
+            static String CLASSNAME = "[Namespace::RXServer.Application.Dev.List][Class::ListItem]";
+
+            #region Private Variables
+            private Boolean m_exists = false;
+
+            private Int32 m_itm_id = 0;
+            private Int32 m_sit_id = 0;
+            private Int32 m_pag_id = 0;
+            private Int32 m_mod_id = 0;
+            private Int32 m_sta_id = 0;
+            private Int32 m_lng_id = 0;
+            private Int32 m_itm_parentid = 0;
+            private Int32 m_itm_order = 0;
+            private String m_itm_title = String.Empty;
+            private String m_itm_alias = String.Empty;
+            private String m_itm_description = String.Empty;
+            private String m_itm_value1 = String.Empty;
+            private String m_itm_value2 = String.Empty;
+            private String m_itm_value3 = String.Empty;
+            private String m_itm_value4 = String.Empty;
+            private String m_itm_value5 = String.Empty;
+            private String m_itm_value6 = String.Empty;
+            private String m_itm_value7 = String.Empty;
+            private String m_itm_value8 = String.Empty;
+            private String m_itm_value9 = String.Empty;
+            private String m_itm_value10 = String.Empty;
+            private DateTime m_itm_createddate = DateTime.Now;
+            private String m_itm_createdby = String.Empty;
+            private DateTime m_itm_updateddate = DateTime.Now;
+            private String m_itm_updatedby = String.Empty;
+            private Boolean m_itm_hidden = false;
+            private Boolean m_itm_deleted = false;
+            #endregion Private Variables
+
+            #region Properties
+
+            public Boolean Exist
+            {
+                get
+                {
+                    return this.m_exists;
+                }
+                set
+                {
+                    this.m_exists = value;
+                }
+            }
+            public Int32 SitId
+            {
+                get
+                {
+                    return this.m_sit_id;
+                }
+                set
+                {
+                    this.m_sit_id = value;
+                }
+            }
+            public Int32 PagId
+            {
+                get
+                {
+                    return this.m_pag_id;
+                }
+                set
+                {
+                    this.m_pag_id = value;
+                }
+            }
+            public Int32 ModId
+            {
+                get
+                {
+                    return this.m_mod_id;
+                }
+                set
+                {
+                    this.m_mod_id = value;
+                }
+            }
+            public Int32 Id
+            {
+                get
+                {
+                    return this.m_itm_id;
+                }
+                set
+                {
+                    this.m_itm_id = value;
+                }
+            }
+            public Int32 Status
+            {
+                get
+                {
+                    return this.m_sta_id;
+                }
+                set
+                {
+                    this.m_sta_id = value;
+                }
+            }
+            public Int32 Language
+            {
+                get
+                {
+                    return this.m_lng_id;
+                }
+                set
+                {
+                    this.m_lng_id = value;
+                }
+            }
+            public Int32 ParentId
+            {
+                get
+                {
+                    return this.m_itm_parentid;
+                }
+                set
+                {
+                    this.m_itm_parentid = value;
+                }
+            }
+            public Int32 Order
+            {
+                get
+                {
+                    return this.m_itm_order;
+                }
+                set
+                {
+                    this.m_itm_order = value;
+                }
+            }
+            public String Name
+            {
+                get
+                {
+                    return this.m_itm_title;
+                }
+                set
+                {
+                    this.m_itm_title = value;
+                }
+            }
+            public String Alias
+            {
+                get
+                {
+                    return this.m_itm_alias;
+                }
+                set
+                {
+                    this.m_itm_alias = value;
+                }
+            }
+            public String Description
+            {
+                get
+                {
+                    return this.m_itm_description;
+                }
+                set
+                {
+                    this.m_itm_description = value;
+                }
+            }
+            public String Value1
+            {
+                get
+                {
+                    return this.m_itm_value1;
+                }
+                set
+                {
+                    this.m_itm_value1 = value;
+                }
+            }
+            public String Value2
+            {
+                get
+                {
+                    return this.m_itm_value2;
+                }
+                set
+                {
+                    this.m_itm_value2 = value;
+                }
+            }
+            public String Value3
+            {
+                get
+                {
+                    return this.m_itm_value3;
+                }
+                set
+                {
+                    this.m_itm_value3 = value;
+                }
+            }
+            public String Value4
+            {
+                get
+                {
+                    return this.m_itm_value4;
+                }
+                set
+                {
+                    this.m_itm_value4 = value;
+                }
+            }
+            public String Value5
+            {
+                get
+                {
+                    return this.m_itm_value5;
+                }
+                set
+                {
+                    this.m_itm_value5 = value;
+                }
+            }
+            public String Value6
+            {
+                get
+                {
+                    return this.m_itm_value6;
+                }
+                set
+                {
+                    this.m_itm_value6 = value;
+                }
+            }
+            public String Value7
+            {
+                get
+                {
+                    return this.m_itm_value7;
+                }
+                set
+                {
+                    this.m_itm_value7 = value;
+                }
+            }
+            public String Value8
+            {
+                get
+                {
+                    return this.m_itm_value8;
+                }
+                set
+                {
+                    this.m_itm_value8 = value;
+                }
+            }
+            public String Value9
+            {
+                get
+                {
+                    return this.m_itm_value9;
+                }
+                set
+                {
+                    this.m_itm_value9 = value;
+                }
+            }
+            public String Value10
+            {
+                get
+                {
+                    return this.m_itm_value10;
+                }
+                set
+                {
+                    this.m_itm_value10 = value;
+                }
+            }
+            public DateTime CreatedDate
+            {
+                get
+                {
+                    return this.m_itm_createddate;
+                }
+                set
+                {
+                    this.m_itm_createddate = value;
+                }
+            }
+            public string CreatedBy
+            {
+                get
+                {
+                    return this.m_itm_createdby;
+                }
+                set
+                {
+                    this.m_itm_createdby = value;
+                }
+            }
+            public DateTime UpdatedDate
+            {
+                get
+                {
+                    return this.m_itm_updateddate;
+                }
+                set
+                {
+                    this.m_itm_updateddate = value;
+                }
+            }
+            public string UpdatedBy
+            {
+                get
+                {
+                    return this.m_itm_updatedby;
+                }
+                set
+                {
+                    this.m_itm_updatedby = value;
+                }
+            }
+            public Boolean Hidden
+            {
+                get
+                {
+                    return this.m_itm_hidden;
+                }
+                set
+                {
+                    this.m_itm_hidden = value;
+                }
+            }
+            public Boolean Deleted
+            {
+                get
+                {
+                    return this.m_itm_deleted;
+                }
+                set
+                {
+                    this.m_itm_deleted = value;
+                }
+            }
+
+            #endregion Properties
+
+            #region Constructors
+            public ListItem() { }
+            public ListItem(Int32 SitId, Int32 PagId, Int32 ModId, Int32 Status, Int32 Language)
+            {
+                m_sit_id = SitId;
+                m_pag_id = PagId;
+                m_mod_id = ModId;
+                m_sta_id = Status;
+                m_lng_id = Language;
+            }
+            public ListItem(Int32 ItmId)
+            {
+                m_itm_id = ItmId;
+                GetById();
+            }
+            ~ListItem()
+            { xFinalize(); }
+            public void Dispose()
+            {
+                xFinalize();
+                System.GC.SuppressFinalize(this);
+            }
+            private void xFinalize()
+            {
+            }
+            #endregion Constructors
+
+            #region Public Functions
+            /// <summary>
+            /// Update
+            /// </summary>
+            public virtual void Update()
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::Update]";
+                try
+                {
+                    if (this.m_exists)
+                    {
+                        StringBuilder sSQL = new StringBuilder();
+                        sSQL.Append("UPDATE obd_objectdata SET ");
+                        sSQL.Append("sta_id = " + this.m_sta_id.ToString() + ", ");
+                        sSQL.Append("lng_id = " + this.m_lng_id.ToString() + ", ");
+                        sSQL.Append("obd_parentid = " + this.m_itm_parentid.ToString() + ", ");
+                        sSQL.Append("obd_order = " + this.m_itm_order.ToString() + ", ");
+                        sSQL.Append("obd_title = '" + this.m_itm_title.ToString() + "', ");
+                        sSQL.Append("obd_alias = '" + this.m_itm_alias.ToString() + "', ");
+                        sSQL.Append("obd_description = '" + this.m_itm_description.ToString() + "', ");
+                        sSQL.Append("obd_varchar1 = '" + this.m_itm_value1.ToString() + "', ");
+                        sSQL.Append("obd_varchar2 = '" + this.m_itm_value2.ToString() + "', ");
+                        sSQL.Append("obd_varchar3 = '" + this.m_itm_value3.ToString() + "', ");
+                        sSQL.Append("obd_varchar4 = '" + this.m_itm_value4.ToString() + "', ");
+                        sSQL.Append("obd_varchar5 = '" + this.m_itm_value5.ToString() + "', ");
+                        sSQL.Append("obd_varchar6 = '" + this.m_itm_value6.ToString() + "', ");
+                        sSQL.Append("obd_varchar7 = '" + this.m_itm_value7.ToString() + "', ");
+                        sSQL.Append("obd_varchar8 = '" + this.m_itm_value8.ToString() + "', ");
+                        sSQL.Append("obd_varchar9 = '" + this.m_itm_value9.ToString() + "', ");
+                        sSQL.Append("obd_varchar10 = '" + this.m_itm_value10.ToString() + "', ");
+                        sSQL.Append("obd_createddate = '" + this.m_itm_createddate.ToString() + "', ");
+                        sSQL.Append("obd_createdby = '" + this.m_itm_createdby.ToString() + "', ");
+                        sSQL.Append("obd_updateddate = '" + this.m_itm_updateddate.ToString() + "', ");
+                        sSQL.Append("obd_updatedby = '" + this.m_itm_updatedby.ToString() + "', ");
+                        sSQL.Append("obd_hidden = " + Convert.ToString(!this.m_itm_hidden ? "0" : "1") + ", ");
+                        sSQL.Append("obd_deleted = " + Convert.ToString(!this.m_itm_deleted ? "0" : "1") + " ");
+                        sSQL.Append("WHERE obd_id = " + m_itm_id.ToString());
+                        using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                            oDo.ExecuteNonQuery(sSQL.ToString());
+
+                        ResetThis();
+                        SortAll();
+
+                        if (this.m_itm_deleted)
+                            DeleteRelations();
+                    }
+                    else
+                    {
+                        Save();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                }
+            }
+            /// <summary>
+            /// Save
+            /// </summary>
+            public virtual void Save()
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::Save]";
+                try
+                {
+                    if (!this.m_exists)
+                    {
+                        DataSet ds = new DataSet();
+                        StringBuilder sSQL = new StringBuilder();
+                        sSQL.Append("INSERT INTO obd_objectdata (sta_id, sit_id, pag_id, mod_id, lng_id, obd_parentid, obd_order, obd_type, obd_title, obd_alias, obd_description, obd_varchar1, obd_varchar2, obd_varchar3, obd_varchar4, obd_varchar5, obd_varchar6, obd_varchar7, obd_varchar8, obd_varchar9, obd_varchar10, obd_varchar11, obd_varchar12, obd_varchar13, obd_varchar14, obd_varchar15, obd_varchar16, obd_varchar17, obd_varchar18, obd_varchar19, obd_varchar20, obd_varchar21, obd_varchar22, obd_varchar23, obd_varchar24, obd_varchar25, obd_varchar26, obd_varchar27, obd_varchar28, obd_varchar29, obd_varchar30, obd_varchar31, obd_varchar32, obd_varchar33, obd_varchar34, obd_varchar35, obd_varchar36, obd_varchar37, obd_varchar38, obd_varchar39, obd_varchar40, obd_varchar41, obd_varchar42, obd_varchar43, obd_varchar44, obd_varchar45, obd_varchar46, obd_varchar47, obd_varchar48, obd_varchar49, obd_varchar50, obd_createddate, obd_createdby, obd_updateddate, obd_updatedby, obd_hidden, obd_deleted) VALUES ( ");
+                        sSQL.Append(this.Status.ToString() + ", ");
+                        sSQL.Append(this.m_sit_id.ToString() + ", ");
+                        sSQL.Append(this.m_pag_id.ToString() + ", ");
+                        sSQL.Append(this.m_mod_id.ToString() + ", ");
+                        sSQL.Append(this.Language.ToString() + ", ");
+                        sSQL.Append(this.ParentId.ToString() + ", ");
+                        sSQL.Append(this.Order.ToString() + ", ");
+                        sSQL.Append("103, ");
+                        sSQL.Append("'" + this.Name + "', ");
+                        sSQL.Append("'" + this.Alias + "', ");
+                        sSQL.Append("'" + this.Description + "', ");
+                        sSQL.Append("'" + this.Value1 + "', ");
+                        sSQL.Append("'" + this.Value2 + "', ");
+                        sSQL.Append("'" + this.Value3 + "', ");
+                        sSQL.Append("'" + this.Value4 + "', ");
+                        sSQL.Append("'" + this.Value5 + "', ");
+                        sSQL.Append("'" + this.Value6 + "', ");
+                        sSQL.Append("'" + this.Value7 + "', ");
+                        sSQL.Append("'" + this.Value8 + "', ");
+                        sSQL.Append("'" + this.Value9 + "', ");
+                        sSQL.Append("'" + this.Value10 + "', ");
+                        sSQL.Append("'', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ");
+                        sSQL.Append("'" + DateTime.Now.ToString() + "', ");
+                        if (HttpContext.Current != null) { sSQL.Append("'dummy', "); } else { sSQL.Append("'NoIdentity', "); }
+                        sSQL.Append("'" + DateTime.Now.ToString() + "', ");
+                        if (HttpContext.Current != null) { sSQL.Append("'dummy', "); } else { sSQL.Append("'NoIdentity', "); }
+                        sSQL.Append("0, ");
+                        sSQL.Append("0)");
+                        using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                        {
+                            Int32 ret = oDo.ExecuteNonQuery(sSQL.ToString());
+                            this.Id = Convert.ToInt32(oDo.GetDataTable("SELECT @@Identity").Rows[0][0]);
+                        }
+
+                        this.m_exists = true;
+                        ResetThis();
+                        SortAll();
+                    }
+                    else
+                    {
+                        Update();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                }
+            }
+            #endregion Public Functions
+
+            #region Private Functions
+            private void GetById()
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::GetById]";
+                DataTable dt = null;
+                try
+                {
+                    StringBuilder sSQL = new StringBuilder();
+                    sSQL.Append("SELECT * FROM obd_objectdata WHERE obd_id = " + m_itm_id.ToString());
+                    using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                    {
+                        dt = oDo.GetDataTable(sSQL.ToString());
+                        if (oDo.HasError)
+                            throw new Exception(oDo.GetError);
+                    }
+                    if (dt.Rows.Count > 0)
+                    {
+                        DataRow dr = dt.Rows[0];
+                        this.m_itm_id = Convert.ToInt32(dr["obd_id"]);
+                        this.m_sta_id = Convert.ToInt32(dr["sta_id"]);
+                        this.m_lng_id = Convert.ToInt32(dr["lng_id"]);
+                        this.m_itm_parentid = Convert.ToInt32(dr["obd_parentid"]);
+                        this.m_itm_order = Convert.ToInt32(dr["obd_order"]);
+                        this.m_itm_title = Convert.ToString(dr["obd_title"]);
+                        this.m_itm_alias = Convert.ToString(dr["obd_alias"]);
+                        this.m_itm_description = Convert.ToString(dr["obd_description"]);
+                        this.m_itm_value1 = Convert.ToString(dr["obd_varchar1"]);
+                        this.m_itm_value2 = Convert.ToString(dr["obd_varchar2"]);
+                        this.m_itm_value3 = Convert.ToString(dr["obd_varchar3"]);
+                        this.m_itm_value4 = Convert.ToString(dr["obd_varchar4"]);
+                        this.m_itm_value5 = Convert.ToString(dr["obd_varchar5"]);
+                        this.m_itm_value6 = Convert.ToString(dr["obd_varchar6"]);
+                        this.m_itm_value7 = Convert.ToString(dr["obd_varchar7"]);
+                        this.m_itm_value8 = Convert.ToString(dr["obd_varchar8"]);
+                        this.m_itm_value9 = Convert.ToString(dr["obd_varchar9"]);
+                        this.m_itm_value10 = Convert.ToString(dr["obd_varchar10"]);
+                        this.m_itm_createddate = Convert.ToDateTime(dr["obd_createddate"]);
+                        this.m_itm_createdby = Convert.ToString(dr["obd_createdby"]);
+                        this.m_itm_updateddate = Convert.ToDateTime(dr["obd_updateddate"]);
+                        this.m_itm_updatedby = Convert.ToString(dr["obd_updatedby"]);
+                        this.m_itm_hidden = Convert.ToBoolean(dr["obd_hidden"]);
+                        this.m_itm_deleted = Convert.ToBoolean(dr["obd_deleted"]);
+                        this.m_exists = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                }
+            }
+            private void SortAll()
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::SortAll]";
+                try
+                {
+                    Int32 Order = 1;
+                    StringBuilder sSQL = new StringBuilder();
+                    sSQL.Append("SELECT * FROM obd_objectdata WHERE obd_deleted = 0 ORDER BY sit_id, pag_id, obd_type, obd_order");
+                    using (iConsulting.iCDataHandler.iCDataObject oDo = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                    {
+                        DataTable dt = oDo.GetDataTable(sSQL.ToString());
+                        if (oDo.HasError)
+                            throw new Exception(oDo.GetError);
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            StringBuilder sSQL2 = new StringBuilder();
+                            sSQL2.Append("UPDATE obd_objectdata SET obd_order = " + Order.ToString() + " WHERE obd_id = " + dr["obd_id"].ToString());
+                            using (iConsulting.iCDataHandler.iCDataObject oDo2 = new iConsulting.iCDataHandler.iCDataObject(System.Configuration.ConfigurationManager.AppSettings["Data.DataSource"].ToString(), System.Configuration.ConfigurationManager.AppSettings["Data.ConnectionString"].ToString(), false, true))
+                                oDo2.ExecuteNonQuery(sSQL2.ToString());
+                            Order = Order + 2;
+                        }
+                        ResetThis();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                }
+            }
+            private void DeleteRelations()
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::DeleteRelations]";
+                try
+                {
+                    // Delete SiteCollection... 
+                    // not in use for Objects...
+
+                    // Delete PageCollection...
+                    // not in use for Objects...
+
+                    // Delete TaskCollection...
+                    // not in use for Objects...
+
+                    // Delete ModuleCollection... 
+                    // not in use for Objects...
+
+                    // Delete DocumentCollection...
+                    // not in use for Objects...
+
+                    // Delete ObjectCollection...
+                    // not in use for Objects...
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                }
+            }
+            #endregion Private Functions
+
+            #region public class GenericComparer
+            public int CompareTo(object obj, string Property)
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::CompareTo]";
+                try
+                {
+                    Type type = this.GetType();
+                    PropertyInfo propertie = type.GetProperty(Property);
+
+
+                    Type type2 = obj.GetType();
+                    PropertyInfo propertie2 = type2.GetProperty(Property);
+
+                    object[] index = null;
+
+                    object Obj1 = propertie.GetValue(this, index);
+                    object Obj2 = propertie2.GetValue(obj, index);
+
+                    IComparable Ic1 = (IComparable)Obj1;
+                    IComparable Ic2 = (IComparable)Obj2;
+
+                    int ret = Ic1.CompareTo(Ic2);
+
+                    return ret;
+
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                    return 0;
+                }
+            }
+            #endregion public class GenericComparer
+
+        }
+
+        #region public class GenericComparer
+
+        public enum SortOrderEnum
+        {
+            Ascending,
+            Descending
+        }
+
+        public enum SortParamEnum
+        {
+            Id,
+            Status,
+            Language,
+            ParentId,
+            Order,
+            Name,
+            Alias,
+            Description,
+            Value1,
+            Value2,
+            Value3,
+            Value4,
+            Value5,
+            Value6,
+            Value7,
+            Value8,
+            Value9,
+            Value10,
+            CreatedDate,
+            CreatedBy,
+            UpdatedDate,
+            UpdatedBy,
+            Hidden,
+            Deleted
+        }
+
+        public class GenericComparer : IComparer
+        {
+            private String _Property = null;
+            private SortOrderEnum _SortOrder = SortOrderEnum.Ascending;
+
+            public String SortProperty
+            {
+                get { return _Property; }
+                set { _Property = value; }
+            }
+
+            public SortOrderEnum SortOrder
+            {
+                get { return _SortOrder; }
+                set { _SortOrder = value; }
+            }
+
+
+            public int Compare(object x, object y)
+            {
+                string FUNCTIONNAME = CLASSNAME + "[Function::Compare]";
+                try
+                {
+                    ListItem ing1 = (ListItem)x;
+                    ListItem ing2 = (ListItem)y;
+
+                    if (this.SortOrder.Equals(SortOrderEnum.Ascending))
+                        return ing1.CompareTo(ing2, this.SortProperty);
+                    else
+                        return ing2.CompareTo(ing1, this.SortProperty);
+                }
+                catch (Exception ex)
+                {
+                    Error.Report(ex, FUNCTIONNAME, "");
+                    return 0;
+                }
+
+            }
+        }
+
+        public void Sort(SortParamEnum SortBy, SortOrderEnum SortOrder)
+        {
+            GenericComparer comparer = new GenericComparer();
+            comparer.SortProperty = SortBy.ToString();
+            comparer.SortOrder = SortOrder;
+            this.InnerList.Sort(comparer);
+        }
+
+        #endregion public class GenericComparer
+    }
+}
+
+// RXServer.Application.Library
+namespace RXServer.Application
+{
+    public class Library
+    { }
+}
+
+// RXServer.Web
+namespace RXServer
+{
+    namespace Web
+    {
+        #region public class CultureInfo
+        public static class CultureInfo
+        {
+            static string CLASSNAME = "[Namespace::RXServer::Web][Class::CultureInfo]";
+            //public static void SetCultureInfo()
+            //{
+            //    string FUNCTIONNAME = CLASSNAME + "[Function::SetCultureInfo]";
+            //    try
+            //    {
+            //        using (LiquidCore.Site s = new LiquidCore.Site(CurrentValues.SitId, RXServer.Data.DataSource, RXServer.Data.ConnectionString))
+            //        {
+            //            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(s.Language.ToString());
+            //            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(s.Language.ToString());
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Error.Report(ex, FUNCTIONNAME, String.Empty);
+            //    }
+            //}
+        }
+        #endregion public class CultureInfo
+
+        #region public class CurrentValues
+        public static class CurrentValues
+        {
+            public static Int32 SitId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Session != null)
+                        if (HttpContext.Current.Session["RXServer.Web.CurrentValues.SitId"] != null)
+                            Int32.TryParse(HttpContext.Current.Session["RXServer.Web.CurrentValues.SitId"].ToString(), out x);
+                    return x;
+                }
+                set
+                {
+                    HttpContext.Current.Session["RXServer.Web.CurrentValues.SitId"] = value;
+                }
+            }
+            public static Int32 PagId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Session != null)
+                        if (HttpContext.Current.Session["RXServer.Web.CurrentValues.PagId"] != null)
+                            Int32.TryParse(HttpContext.Current.Session["RXServer.Web.CurrentValues.PagId"].ToString(), out x);
+                    return x;
+                }
+                set
+                {
+                    HttpContext.Current.Session["RXServer.Web.CurrentValues.PagId"] = value;
+                }
+            }
+        }
+        #endregion public class CurrentValues
+
+        #region public class SelectedPages
+        //public static class SelectedPages
+        //{
+        //    static string CLASSNAME = "[Namespace::RXServer::Web][Class::SelectedPages]";
+        //    public static Int32 Level1
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level1_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level1_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level2
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level2_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level2_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level3
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level3_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level3_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level4
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level4_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level4_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level5
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level5_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level5_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level6
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level6_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level6_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level7
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level7_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level7_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level8
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level8_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level8_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static Int32 Level9
+        //    {
+        //        get
+        //        {
+        //            Int32 x = 0;
+        //            String y = "RXServer.Web.SelectedPages.Level9_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    Int32.TryParse(HttpContext.Current.Session[y].ToString(), out x);
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level9_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level1Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level1Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level1Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level2Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level2Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level2Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level3Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level3Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level3Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level4Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level4Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level4Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level5Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level5Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level5Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level6Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level6Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level6Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level7Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level7Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level7Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level8Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level8Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level8Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+        //    public static String Level9Name
+        //    {
+        //        get
+        //        {
+        //            String x = String.Empty;
+        //            String y = "RXServer.Web.SelectedPages.Level9Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString();
+        //            if (HttpContext.Current.Session != null)
+        //                if (HttpContext.Current.Session[y] != null)
+        //                    x = HttpContext.Current.Session[y].ToString();
+        //            return x;
+        //        }
+        //        set
+        //        {
+        //            HttpContext.Current.Session["RXServer.Web.SelectedPages.Level9Name_On_SitId_" + RXServer.Web.CurrentValues.SitId.ToString()] = value;
+        //        }
+        //    }
+
+        //    public static void SetSelected()
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::SetSelected]";
+        //        Int32 CurrentSitId = 0;
+        //        Int32 CurrentPagId = 0;
+        //        try
+        //        {
+        //            Level1 = 0;
+        //            Level2 = 0;
+        //            Level3 = 0;
+        //            Level4 = 0;
+        //            Level5 = 0;
+        //            Level6 = 0;
+        //            Level7 = 0;
+        //            Level8 = 0;
+        //            Level9 = 0;
+        //            Level1Name = String.Empty;
+        //            Level2Name = String.Empty;
+        //            Level3Name = String.Empty;
+        //            Level4Name = String.Empty;
+        //            Level5Name = String.Empty;
+        //            Level6Name = String.Empty;
+        //            Level7Name = String.Empty;
+        //            Level8Name = String.Empty;
+        //            Level9Name = String.Empty;
+        //            CurrentSitId = CurrentValues.SitId;
+        //            CurrentPagId = CurrentValues.PagId;
+        //            if (!CurrentPagId.Equals(0))
+        //            {
+        //                using (Menus.MenuItem m = new Menus.MenuItem(CurrentSitId, CurrentPagId))
+        //                {
+        //                    if (!m.ParentId.Equals(0))
+        //                    {
+        //                        GetParent(CurrentSitId, m.ParentId);
+        //                        switch (m.Parents.Length)
+        //                        {
+        //                            case 1:
+        //                                Level2 = CurrentPagId;
+        //                                Level2Name = m.Name;
+        //                                break;
+        //                            case 2:
+        //                                Level3 = CurrentPagId;
+        //                                Level3Name = m.Name;
+        //                                break;
+        //                            case 3:
+        //                                Level4 = CurrentPagId;
+        //                                Level4Name = m.Name;
+        //                                break;
+        //                            case 4:
+        //                                Level5 = CurrentPagId;
+        //                                Level5Name = m.Name;
+        //                                break;
+        //                            case 5:
+        //                                Level6 = CurrentPagId;
+        //                                Level6Name = m.Name;
+        //                                break;
+        //                            case 6:
+        //                                Level7 = CurrentPagId;
+        //                                Level7Name = m.Name;
+        //                                break;
+        //                            case 7:
+        //                                Level8 = CurrentPagId;
+        //                                Level8Name = m.Name;
+        //                                break;
+        //                            case 8:
+        //                                Level9 = CurrentPagId;
+        //                                Level9Name = m.Name;
+        //                                break;
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        Level1 = CurrentPagId;
+        //                        Level1Name = m.Name;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //        }
+        //    }
+        //    private static void GetParent(Int32 SitId, Int32 PagId)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GetParent]";
+        //        try
+        //        {
+        //            using (Menus.MenuItem m = new Menus.MenuItem(SitId, PagId))
+        //            {
+        //                if (!m.ParentId.Equals(0))
+        //                {
+        //                    GetParent(SitId, m.ParentId);
+        //                    switch (m.Parents.Length)
+        //                    {
+        //                        case 1:
+        //                            Level2 = PagId;
+        //                            Level2Name = m.Name;
+        //                            break;
+        //                        case 2:
+        //                            Level3 = PagId;
+        //                            Level3Name = m.Name;
+        //                            break;
+        //                        case 3:
+        //                            Level4 = PagId;
+        //                            Level4Name = m.Name;
+        //                            break;
+        //                        case 4:
+        //                            Level5 = PagId;
+        //                            Level5Name = m.Name;
+        //                            break;
+        //                        case 5:
+        //                            Level6 = PagId;
+        //                            Level6Name = m.Name;
+        //                            break;
+        //                        case 6:
+        //                            Level7 = PagId;
+        //                            Level7Name = m.Name;
+        //                            break;
+        //                        case 7:
+        //                            Level8 = PagId;
+        //                            Level8Name = m.Name;
+        //                            break;
+        //                        case 8:
+        //                            Level9 = PagId;
+        //                            Level9Name = m.Name;
+        //                            break;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    Level1 = PagId;
+        //                    Level1Name = m.Name;
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //        }
+        //    }
+        //    public static String GetSelectedSiteMapPath(String Devider)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GetSelectedSiteMapPath]";
+        //        StringBuilder ret = new StringBuilder();
+        //        try
+        //        {
+        //            if (Level9Name.Equals(String.Empty))
+        //            {
+        //                if (Level8Name.Equals(String.Empty))
+        //                {
+        //                    if (Level7Name.Equals(String.Empty))
+        //                    {
+        //                        if (Level6Name.Equals(String.Empty))
+        //                        {
+        //                            if (Level5Name.Equals(String.Empty))
+        //                            {
+        //                                if (Level4Name.Equals(String.Empty))
+        //                                {
+        //                                    if (Level3Name.Equals(String.Empty))
+        //                                    {
+        //                                        if (Level2Name.Equals(String.Empty))
+        //                                        {
+        //                                            ret.Append(Level1Name);
+        //                                        }
+        //                                        else
+        //                                        {
+        //                                            ret.Append(Level1Name);
+        //                                            ret.Append(Devider);
+        //                                            ret.Append(Level2Name);
+        //                                        }
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        ret.Append(Level1Name);
+        //                                        ret.Append(Devider);
+        //                                        ret.Append(Level2Name);
+        //                                        ret.Append(Devider);
+        //                                        ret.Append(Level3Name);
+        //                                    }
+        //                                }
+        //                                else
+        //                                {
+        //                                    ret.Append(Level1Name);
+        //                                    ret.Append(Devider);
+        //                                    ret.Append(Level2Name);
+        //                                    ret.Append(Devider);
+        //                                    ret.Append(Level3Name);
+        //                                    ret.Append(Devider);
+        //                                    ret.Append(Level4Name);
+        //                                }
+        //                            }
+        //                            else
+        //                            {
+        //                                ret.Append(Level1Name);
+        //                                ret.Append(Devider);
+        //                                ret.Append(Level2Name);
+        //                                ret.Append(Devider);
+        //                                ret.Append(Level3Name);
+        //                                ret.Append(Devider);
+        //                                ret.Append(Level4Name);
+        //                                ret.Append(Devider);
+        //                                ret.Append(Level5Name);
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            ret.Append(Level1Name);
+        //                            ret.Append(Devider);
+        //                            ret.Append(Level2Name);
+        //                            ret.Append(Devider);
+        //                            ret.Append(Level3Name);
+        //                            ret.Append(Devider);
+        //                            ret.Append(Level4Name);
+        //                            ret.Append(Devider);
+        //                            ret.Append(Level5Name);
+        //                            ret.Append(Devider);
+        //                            ret.Append(Level6Name);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        ret.Append(Level1Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level2Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level3Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level4Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level5Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level6Name);
+        //                        ret.Append(Devider);
+        //                        ret.Append(Level7Name);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    ret.Append(Level1Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level2Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level3Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level4Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level5Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level6Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level7Name);
+        //                    ret.Append(Devider);
+        //                    ret.Append(Level8Name);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                ret.Append(Level1Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level2Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level3Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level4Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level5Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level6Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level7Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level8Name);
+        //                ret.Append(Devider);
+        //                ret.Append(Level9Name);
+        //            }
+        //            return ret.ToString();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return ret.ToString();
+        //        }
+        //    }
+        //    public static Boolean IsSelected(Int32 PagId)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::IsSelected]";
+        //        try
+        //        {
+        //            if (PagId.Equals(SelectedPages.Level1) ||
+        //                PagId.Equals(SelectedPages.Level2) ||
+        //                PagId.Equals(SelectedPages.Level3) ||
+        //                PagId.Equals(SelectedPages.Level4) ||
+        //                PagId.Equals(SelectedPages.Level5) ||
+        //                PagId.Equals(SelectedPages.Level6) ||
+        //                PagId.Equals(SelectedPages.Level7) ||
+        //                PagId.Equals(SelectedPages.Level8) ||
+        //                PagId.Equals(SelectedPages.Level9))
+        //            {
+        //                return true;
+        //            }
+        //            return false;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return false;
+        //        }
+        //    }
+        //    public static String GetDynamicSiteMapPath(Int32 PagId, String Devider)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GetDynamicSiteMapPath]";
+        //        StringBuilder ret = new StringBuilder();
+        //        try
+        //        {
+        //            if (!PagId.Equals(0))
+        //            {
+        //                using (Menus.MenuItem m = new Menus.MenuItem(CurrentValues.SitId, PagId))
+        //                {
+        //                    if (!m.ParentId.Equals(0))
+        //                    {
+        //                        GetDynamicSiteMapPathParent(m.ParentId, ref ret, Devider);
+        //                        ret.Append(Devider + m.Name);
+        //                    }
+        //                    else
+        //                        ret.Append(m.Name);
+        //                }
+        //            }
+        //            return ret.ToString();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return ret.ToString();
+        //        }
+        //    }
+        //    private static void GetDynamicSiteMapPathParent(Int32 PagId, ref StringBuilder ret, String Devider)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GetDynamicSiteMapPathParent]";
+        //        try
+        //        {
+        //            if (!PagId.Equals(0))
+        //            {
+        //                using (Menus.MenuItem m = new Menus.MenuItem(CurrentValues.SitId, PagId))
+        //                {
+        //                    if (!m.ParentId.Equals(0))
+        //                    {
+        //                        GetDynamicSiteMapPathParent(m.ParentId, ref ret, Devider);
+        //                        ret.Append(Devider + m.Name);
+        //                    }
+        //                    else
+        //                        ret.Append(m.Name);
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //        }
+        //    }
+        //}
+        #endregion public class SelectedPages
+
+        #region public class ControlValues
+        //public static class ControlValues
+        //{
+        //    static string CLASSNAME = "[Namespace::RXServer::Web][Class::ControlValues]";
+        //    public static string PageControlDate
+        //    {
+        //        get
+        //        {
+        //            string FUNCTIONNAME = CLASSNAME + "[Function::PageControlDate::Get]";
+        //            try
+        //            {
+        //                String ret = String.Empty;
+        //                using (RXServer.Web.Menus.MenuItem mi = new RXServer.Web.Menus.MenuItem(CurrentValues.SitId, CurrentValues.PagId))
+        //                {
+        //                    ret = mi.Settings.ControlDate;
+        //                }
+        //                return ret;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //                return String.Empty;
+        //            }
+        //        }
+        //        set
+        //        {
+        //            string FUNCTIONNAME = CLASSNAME + "[Function::PageControlDate:Set]";
+        //            try
+        //            {
+        //                using (RXServer.Web.Menus.MenuItem mi = new RXServer.Web.Menus.MenuItem(CurrentValues.SitId, CurrentValues.PagId))
+        //                {
+        //                    mi.Settings.ControlDate = value;
+        //                    mi.Settings.Save();
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            }
+        //        }
+        //    }
+        //}
+        #endregion public class ControlValues
+
+        #region public class RequestValues
+        public static class RequestValues
+        {
+            public static Int32 SitId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["SitId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["SitId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 PagId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["PagId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["PagId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 ModId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["ModId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["ModId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 MenId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["MenId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["MenId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 ItmId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["ItmId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["ItmId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 ForumId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["ForumId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["ForumId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 ThreadId
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["ThreadId"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["ThreadId"], out x);
+                    return x;
+                }
+            }
+            public static Int32 Sort
+            {
+                get
+                {
+                    Int32 x = 0;
+                    if (HttpContext.Current.Request["Sort"] != null)
+                        Int32.TryParse(HttpContext.Current.Request["Sort"], out x);
+                    return x;
+                }
+            }
+            public static String Url
+            {
+                get
+                {
+                    String x = String.Empty;
+                    if (HttpContext.Current.Request["Url"] != null)
+                        x = HttpContext.Current.Request["Url"].ToString();
+                    return x;
+                }
+            }
+            public static String ConPa
+            {
+                get
+                {
+                    String x = String.Empty;
+                    if (HttpContext.Current.Request["ConPa"] != null)
+                        x = HttpContext.Current.Request["ConPa"].ToString();
+                    return x;
+                }
+            }
+        }
+        #endregion public class RequestValues
+
+        #region public class Redirect
+        public static class Redirect
+        {
+            public static void To(String Url)
+            {
+                HttpContext.Current.Response.Redirect(Url, false);
+            }
+        }
+        #endregion public class Redirect
+
+        #region public class SiteMap
+        //public static class SiteMap
+        //{
+        //    static string CLASSNAME = "[Namespace::RXServer::Web][Class::SiteMap]";
+        //    private static StringBuilder Html = new StringBuilder();
+        //    public static StringBuilder GenerateHtml(Int32 SitId)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GenerateHtml]";
+        //        try
+        //        {
+        //            return _GenerateHtml(SitId, 0);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return new StringBuilder();
+        //        }
+        //    }
+        //    public static StringBuilder GenerateHtml(Int32 SitId, Int32 PagId)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::GenerateHtml]";
+        //        try
+        //        {
+        //            return _GenerateHtml(SitId, PagId);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return new StringBuilder();
+        //        }
+        //    }
+        //    private static StringBuilder _GenerateHtml(Int32 SitId, Int32 PagId)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::_GenerateHtml]";
+        //        try
+        //        {
+        //            Html = new StringBuilder();
+        //            using (RXServer.PageCollection pc = new RXServer.PageCollection(SitId, PagId, false, RXServer.Data.DataSource, RXServer.Data.ConnectionString))
+        //            {
+        //                if (!PagId.Equals(0))
+        //                    using (RXServer.Web.Menus.MenuItem mi = new RXServer.Web.Menus.MenuItem(SitId, PagId))
+        //                    {
+        //                        Html.Append("<div class=\"sitemapitem0\"><a href=\"Default.aspx?PagId=" + PagId.ToString() + "\">" + HttpContext.Current.Server.UrlDecode(mi.Name) + "</a></div>");
+        //                    }
+        //                Write(pc);
+        //            }
+        //            return Html;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //            return new StringBuilder();
+        //        }
+        //    }
+        //    private static void Write(RXServer.PageCollection pc)
+        //    {
+        //        string FUNCTIONNAME = CLASSNAME + "[Function::Write]";
+        //        try
+        //        {
+        //            foreach (RXServer.Page p in pc.Items)
+        //            {
+        //                if (!p.Hidden)
+        //                {
+        //                    System.Text.StringBuilder s = new System.Text.StringBuilder();
+        //                    Int32 index = 0;
+        //                    if (p.Parents != null)
+        //                    {
+        //                        index = p.Parents.Length;
+        //                        //for (Int32 i = 0; i < index; i++)
+        //                        //    s.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+        //                    }
+        //                    s.Append("<div class=\"sitemapitem" + index.ToString() + "\"><a href=\"Default.aspx?PagId=" + p.Id.ToString() + "\">" + HttpContext.Current.Server.UrlDecode(p.Name) + "</a></div>");
+        //                    Html.Append(s.ToString());
+
+        //                    if (p.Pages.Count() > 0)
+        //                        Write(p.Pages);
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Error.Report(ex, FUNCTIONNAME, String.Empty);
+        //        }
+        //    }
+        //}
+        #endregion public class SiteMap
+    }
+    
+}

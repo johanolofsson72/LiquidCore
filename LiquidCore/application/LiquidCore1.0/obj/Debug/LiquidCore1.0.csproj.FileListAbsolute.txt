@@ -1,0 +1,28 @@
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCXmlDbClient.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\MySql.Data.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\RXContentHolder.pdb
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.dll
+C:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCXmlDbClient.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\ResolveAssemblyReference.cache
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.dll
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.pdb
+D:\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\ResolveAssemblyReference.cache
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\obj\Debug\LiquidCore.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\LiquidCore.pdb
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCXmlDbClient.dll
+D:\My Documents\My Dropbox\Development\LiquidCore\LiquidCore\application\LiquidCore1.0\bin\Debug\iCDataHandler.pdb

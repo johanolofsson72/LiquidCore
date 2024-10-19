@@ -1,0 +1,19 @@
+* SP bortplockade, kanske får vi göra en reqursiv sortall på alla underobject, det görs inte nu.
+
+* Från och med 4.1.0.1 krävs nya fält i db så som mod_mobileorder, mod_mobilehidden samt pag_mobilehidden.
+
+* Klart, Skapa ett List object som ska användas av olika rxmoduler.
+
+* RXServer.Admin
+  RXServer.Modules
+  RXServer.Lib
+  RXServer.Auth
+  
+* Aggregation
+  Nu finns aggregation inbyggt och fungerar så här:
+  När en modul skapas så skapas även en rad i aggregation tabellen, 
+  detta för att kunna utnyttja denna tabell som referrens när man vill aggregera en modul på flera sidor.
+  för att sedan skapa aggregationer så kör man mot:
+  LiquidCore.Aggregation.Add
+  LiquidCore.Aggregation.Delete
+      
